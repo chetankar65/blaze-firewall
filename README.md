@@ -1,7 +1,7 @@
 # blaze-firewall (still under development)
 A simple rudimentary firewall written in C leveraging many networking principles and UNIX libraries. <br>
 
-Commands:
+Commands:<br>
 <code>add ACCESS-TYPE [IP/PORT] PROTOCOL</code>: Adds a rule <br>
 <code>delete RULE_NO</code>: Deletes a specific rule <br>
 <code>update RULE_NO ACCESS-TYPE [IP/PORT] PROTOCOL </code>: Updates a specific rule <br>
