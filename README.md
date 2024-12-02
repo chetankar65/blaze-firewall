@@ -1,4 +1,4 @@
-# blaze-firewall
+# blaze-firewall (still under development)
 A simple rudimentary firewall written in C leveraging many networking principles and UNIX libraries. <br>
 
 Commands:
