@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include "firewall_rules.h"
+#include "includes/firewall_rules.h"
 
 #define BUFFER_SIZE 1024
 #define MAXARGS 10
@@ -83,12 +83,14 @@ void tokenize(char* input_buf) {
         if (is_ip(ip_or_port)) {
             Rule rule;
             rule.type = map_access(access);
-            rule.portno = -1;
+            rule.portno = 0;
             rule.proto = map_protocol(protocol);
             strcpy(rule.ip_addr, ip_or_port);
             add_rule(rule, 1);
             printf("Added a new rule.\n");
         }
+
+        read_rules(); 
     } else if (strncmp(command, "update", 6) == 0) {
         token = strtok(NULL, delimiter);
         while (token) {
@@ -109,12 +111,23 @@ void tokenize(char* input_buf) {
         if (is_ip(ip_or_port)) {
             Rule rule;
             rule.type = map_access(access);
-            rule.portno = -1;
+            rule.portno = 0;
             rule.proto = map_protocol(protocol);
             strcpy(rule.ip_addr, ip_or_port);
             update_rule(rule, rule_no, 1);
             printf("Updated a rule.\n");
         }
+    } else if (strncmp(command, "delete", 6) == 0) {
+        /// deletion logic
+        token = strtok(NULL, delimiter);
+        while (token) {
+            args[arg_count++] = token;
+            token = strtok(NULL, delimiter);
+        }
+
+        int rule_no = atoi(args[0]);
+        delete_rule(rule_no);
+        read_rules(); // reload the array
     }
 
 }
@@ -125,9 +138,9 @@ int main() {
     printf("Welcome to blaze firewall\n"); 
     printf("Input format: ACTION ACCESS-TYPE [IP/PORT] PROTOCOL\n");
     /*
-    command structure
+    Commands:
     add ACCESS-TYPE [IP/PORT] PROTOCOL
-    delete [IP/PORT] PROTOCOL
+    delete RULE_NO
     update RULE_NO ACCESS-TYPE [IP/PORT] PROTOCOL
     list
     */
