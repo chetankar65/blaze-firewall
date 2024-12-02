@@ -32,7 +32,7 @@ char* rev_map_protocol(Protocol type) {
 
 char* rev_map_access(Access type) {
     if (type == ALLOW) {
-        return "ALLOW";
+        return "ACCEPT";
     } else if (type == DENY) {
         return "DROP";
     }
@@ -101,15 +101,23 @@ void read_rules() {
     close(fd);
 }
 
-void update_rule(Rule rule) {
+int update_rule(Rule rule, int rule_no, int ip) {
     // all rules are already brought into memory
     for (int i = 0; i < rule_count; i++) {
-
+        if (rule_no == (i + 1)) {
+            char full_command[CMD_SIZE];            
+            sprintf(full_command, "sudo iptables -D INPUT -s %s -p %s -j %s", all_rules[i]->ip_addr, rev_map_protocol(all_rules[i]->proto), rev_map_access(all_rules[i]->type));
+            int ret = system(full_command);
+            all_rules[i] = &rule;
+            add_rule(rule, ip);
+            return 0;
+        }
     }
+
+    return 1;
 }
-
-//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
-
-void delete_rule() {
+/*
+int delete_rule(int rule_no) {
 
 }
+*/

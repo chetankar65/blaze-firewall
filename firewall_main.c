@@ -54,6 +54,13 @@ void tokenize(char* input_buf) {
 
     char* args[MAXARGS];
     int arg_count = 0;
+
+    if (strncmp(command, "exit", 4) == 0) exit(0);
+    if (strncmp(command, "list", 4) == 0) {
+        print_all_rules();
+        return;
+    }
+
     if (strncmp(command, "add", 3) == 0) {
         token = strtok(NULL, delimiter);
         while (token) {
@@ -82,7 +89,32 @@ void tokenize(char* input_buf) {
             add_rule(rule, 1);
             printf("Added a new rule.\n");
         }
+    } else if (strncmp(command, "update", 6) == 0) {
+        token = strtok(NULL, delimiter);
+        while (token) {
+            args[arg_count++] = token;
+            token = strtok(NULL, delimiter);
+        }
 
+        char* access;
+        char* ip_or_port;
+        char* protocol;
+        int rule_no = atoi(args[0]);
+        access = args[1];
+        ip_or_port = args[2];
+        protocol = args[3];
+        Access type;
+        Protocol ptype;
+
+        if (is_ip(ip_or_port)) {
+            Rule rule;
+            rule.type = map_access(access);
+            rule.portno = -1;
+            rule.proto = map_protocol(protocol);
+            strcpy(rule.ip_addr, ip_or_port);
+            update_rule(rule, rule_no, 1);
+            printf("Updated a rule.\n");
+        }
     }
 
 }
@@ -96,7 +128,7 @@ int main() {
     command structure
     add ACCESS-TYPE [IP/PORT] PROTOCOL
     delete [IP/PORT] PROTOCOL
-    update ACCESS-TYPE [IP/PORT] PROTOCOL
+    update RULE_NO ACCESS-TYPE [IP/PORT] PROTOCOL
     list
     */
     read_rules(); 
@@ -107,7 +139,6 @@ int main() {
         printf("$> ");
         fgets(buffer, BUFFER_SIZE, stdin);
         tokenize(buffer);
-        read_rules(); 
-        print_all_rules();
+        //read_rules(); 
     }
 }
