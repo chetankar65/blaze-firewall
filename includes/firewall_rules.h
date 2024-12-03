@@ -10,7 +10,7 @@
 #define CMD_SIZE 1024
 
 typedef enum Access {ALLOW, DENY} Access;
-typedef enum Protocol {IP, ICMP} Protocol;
+typedef enum Protocol {IP, ICMP, TCP} Protocol;
 
 typedef struct Rule {
     Access type; // allow/ deny connections
@@ -27,6 +27,8 @@ char* rev_map_protocol(Protocol type) {
         return "ip";
     } else if (type == ICMP) {
         return "icmp";
+    } else if (type == TCP) {
+        return "tcp";
     }
 }
 
@@ -46,12 +48,17 @@ void serialize_rule(int fd, Rule *rule, int ip) {
         if (ip) {
             /// adding a rule for a particular IP. If its 0, means we are 
             /// doing for port
-            char full_command[CMD_SIZE];
-            // iptables -A INPUT -s 127.0.0.1 -p icmp -j DROP
-            
+            char full_command[CMD_SIZE];            
             sprintf(full_command, "sudo iptables -A INPUT -s %s -p %s -j %s", rule->ip_addr, rev_map_protocol(rule->proto), rev_map_access(rule->type));
             int ret = system(full_command);
-            if (ret == 0) printf("Success\n");
+            if (ret == 0) printf("Blocked connections from IP %s\n", rule->ip_addr);
+            else printf("Some error!\n");
+        } else {
+            char full_command[CMD_SIZE];  
+            printf("Port number: %d\n", rule->portno);          
+            sprintf(full_command, "sudo iptables -A INPUT -p %s --dport %d -j %s", rev_map_protocol(rule->proto), rule->portno, rev_map_access(rule->type));
+            int ret = system(full_command);
+            if (ret == 0) printf("Blocked connections to port %d\n", rule->portno);
             else printf("Some error!\n");
         }
     }

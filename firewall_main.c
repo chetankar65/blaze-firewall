@@ -24,7 +24,7 @@ Access map_access(char* access) {
     } else if (strncmp(access, "deny", 4) == 0) {
         type = DENY;
     } else {
-        printf("Incorrent format.\n");
+        printf("Invalid access identifer.\n");
         exit(1);
     }
 
@@ -37,8 +37,10 @@ Protocol map_protocol(char* protocol) {
         proto = IP; 
     } else if (strncmp(protocol, "ICMP", 4) == 0) {
         proto = ICMP;
+    } else if (strncmp(protocol, "TCP", 3) == 0) {
+        proto = TCP;
     } else {
-        printf("Incorrent format.\n");
+        printf("Invalid protocol name.\n");
         exit(1);
     }
 
@@ -87,6 +89,14 @@ void tokenize(char* input_buf) {
             rule.proto = map_protocol(protocol);
             strcpy(rule.ip_addr, ip_or_port);
             add_rule(rule, 1);
+            printf("Added a new rule.\n");
+        } else {
+            Rule rule;
+            rule.type = map_access(access);
+            rule.portno = atoi(ip_or_port);
+            rule.proto = map_protocol(protocol);
+            strcpy(rule.ip_addr, "localhost");
+            add_rule(rule, 0);
             printf("Added a new rule.\n");
         }
 

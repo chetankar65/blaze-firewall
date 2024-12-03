@@ -1,4 +1,4 @@
-# blaze-firewall (still under development)
+# blaze-firewall 
 A simple rudimentary firewall written in C leveraging many networking principles and UNIX libraries. <br>
 
 Commands:<br>
@@ -9,8 +9,8 @@ Commands:<br>
 <code>exit</code>: Exists the service <br>
 
 Special commands:
-add deny *: Allows no connection to system (not done fully) <br>
-add allow *: ALlows all connections to system (not done fully) <br>
+add deny *: Allows no connection to system <br>
+add allow *: Allows all connections to system <br>
 
 TODO:
 - Prevent connections to a specific port
